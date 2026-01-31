@@ -1,3 +1,7 @@
+div.menu-acesso, div.menu-registro{
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  width: 400px;
+}
 @media (width >= 80rem){
   .container-xl{
     max-width: 100vw;

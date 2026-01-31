@@ -10,10 +10,9 @@ export const AuthProvider = ({ children }) => {
     { email: 'admin@gov.br', nascimento: '1990-01-01', senha: '123' }
   ]);
 
-  const login = (email, senha) => {
-    const foundUser = usersDB.find(u => u.email === email && u.senha === senha);
-    if (foundUser) {
-      setUser(foundUser);
+  const login = (userFromBackend) => {
+    if (userFromBackend && userFromBackend.email) {
+      setUser(userFromBackend);
       return true;
     }
     return false;
