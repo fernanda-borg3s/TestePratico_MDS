@@ -1,0 +1,16 @@
+@media (width >= 80rem){
+  .container-xl{
+    max-width: 100vw;
+  }
+  
+}
+@media (min-width: 576px) {
+    .br-menu.push .menu-footer, .br-menu.push .menu-header{
+        display: block;
+    }
+      .br-menu .menu-header{
+    display: flex!important;
+    flex-direction: row;
+
+  }
+}

@@ -1,0 +1,36 @@
+/* Sidebar.css */
+
+/* Menu inicialmente escondido à esquerda */
+.br-menu.push {
+  position: fixed;
+  top: 0;
+  left: -100%; /* Escondido */
+  width: 100%;
+  max-width: 380px; 
+  height: 100vh;
+  z-index: 9999;
+  /* transition: left 0.3s ease-in-out; */
+  background: white;
+  box-shadow: 4px 0px 10px rgba(0,0,0,0.2);
+  /* display: block !important; Força display para a transição funcionar */
+}
+
+/* Quando ativo, desliza para dentro */
+.br-menu.push.active {
+  left: 0;
+}
+
+/* Fundo escuro (Scrim) */
+.menu-scrim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  display: none;
+}
+.menu-scrim.active {
+  display: block;
+}
