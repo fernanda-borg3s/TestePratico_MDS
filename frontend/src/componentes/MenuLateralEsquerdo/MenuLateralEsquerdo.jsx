@@ -1,9 +1,9 @@
 import Logo from "../../assets/Img/LogoGov.png";
 import "./MenuLateralEsquerdo.css";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from '../../contexts/AuthContext'; 
 
 export default function MenuLateralEsquerdo({ isOpen, onClose }) {
-  const { user, logout } = useAuth();
+  const { user, logout, newUser } = useAuth();
   return (
     <>
       <div
@@ -36,7 +36,7 @@ export default function MenuLateralEsquerdo({ isOpen, onClose }) {
                 </div>
               </div>
               <nav className="menu-body" role="tree">
-                {user ? (
+                {user || newUser ? (
                   <div className="menu-folder active">
                     <a
                       className="menu-item divider"

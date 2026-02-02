@@ -3,16 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
 import MenuLateralEsquerdo from "../../componentes/MenuLateralEsquerdo/MenuLateralEsquerdo";
+import PopUps from "../../componentes/PopUps/PopUps";
+import Button from "../../componentes/Button/Button";
 import Service from "../../Services/service";
+import { getPopupConfig } from "../../Services/popupConfigs";
 
 export default function PaginaRegistro() {
+  const { registrar } = useAuth();
+
   const [menuAberto, setMenuAberto] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     dt_nascimento: "",
     senha: "",
   });
-  const { register } = useAuth();
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState(null); //armazena valores da popupconfigs
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -29,12 +35,21 @@ export default function PaginaRegistro() {
 
     try {
       const result = await Service.registro(data);
-      console.log("Resultado do registro:", result);
-
-      // POP-UP de Retorno (Sucesso ou Erro)
-      alert(result.message);
-    } catch (error) {
-      console.error("Erro ao tentar registrar.", error);
+      //cria usuario ficticio
+      if (result.ok) {
+        const newUser = {
+          email: formData.email,
+          dt_nascimento: formData.dt_nascimento,
+        };
+        registrar(newUser);//chama função no authContext para salvar no local o usuario ficticio
+        navigate("/painel", { state: { showSuccessPopup: true } });
+      } else {
+        setPopupConfig(getPopupConfig(result.status));
+        setShowPopup(true);
+      }
+    } catch {
+      setPopupConfig(getPopupConfig(500));
+      setShowPopup(true);
     }
   };
   return (
@@ -48,11 +63,23 @@ export default function PaginaRegistro() {
           isOpen={menuAberto}
           onClose={() => setMenuAberto(false)}
         />
-        <main class="d-flex mb-5" id="main">
-          <div class="container-lg d-flex align-item-center justify-content-center">
-            <div class="row">
-              <div class="br-menu menu-registro" id="main-navigation">
-                <div class="main-content p-4" id="main-content">
+        {showPopup && popupConfig && (
+          <PopUps
+            classColor={popupConfig.classColor}
+            icon={popupConfig.icon}
+            mensagemTitle={popupConfig.mensagemTitle}
+            mensagemBody={popupConfig.mensagemBody}
+            onClose={() => {
+              setShowPopup(false);
+              setPopupConfig(null);
+            }}
+          />
+        )}
+        <main className="d-flex m-auto" id="main">
+          <div className="container-lg d-flex align-items-center justify-content-center">
+            <div className="row">
+              <div className="br-menu menu-registro" id="main-navigation">
+                <div className="main-content p-4" id="main-content">
                   <h2 className="">Novo Registro</h2>
                   <form onSubmit={handleSubmit}>
                     <div className="br-input mb-3">
@@ -61,6 +88,8 @@ export default function PaginaRegistro() {
                         id="email"
                         type="email"
                         name="email"
+                        placeholder="E-mail"
+                        value={formData.email}
                         required
                         onChange={handleChange}
                       />
@@ -71,6 +100,7 @@ export default function PaginaRegistro() {
                         id="nascimento"
                         type="date"
                         name="dt_nascimento"
+                        value={formData.dt_nascimento}
                         required
                         onChange={handleChange}
                       />
@@ -81,14 +111,13 @@ export default function PaginaRegistro() {
                         id="senha"
                         type="password"
                         name="senha"
+                        placeholder="Senha"
+                        value={formData.senha}
                         required
                         onChange={handleChange}
                       />
                     </div>
-                    <button className="br-button primary" type="submit">
-                      {" "}
-                      Registrar
-                    </button>
+                    <Button titulo={"Registrar"} />
                   </form>
                 </div>
               </div>

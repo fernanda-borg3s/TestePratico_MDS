@@ -1,11 +1,9 @@
-import React from "react";
 import Logo from "../../assets/Img/LogoGov.png";
-import MenuLateralEsquerdo from "../MenuLateralEsquerdo/MenuLateralEsquerdo.jsx";
 
-export default function Cabecalho({ onToggleMenu, titulopage }) {
+export default function Cabecalho({ onToggleMenu, titulopage, displayHide }) {
   return (
     <>
-      <header className="br-header mb-4" id="header" data-sticky="data-sticky">
+      <header className="br-header " id="header" data-sticky="data-sticky">
         <div className="container-lg">
           <div className="header-top">
             <div className="header-logo">
@@ -83,7 +81,7 @@ export default function Cabecalho({ onToggleMenu, titulopage }) {
                   <i className="fas fa-search" aria-hidden="true"></i>
                 </button>
               </div>
-              <div className="header-login">
+              <div className={`header-login ${displayHide}`}>
                 <div className="header-sign-in">
                   <button
                     className="br-sign-in small"
@@ -99,7 +97,7 @@ export default function Cabecalho({ onToggleMenu, titulopage }) {
           </div>
           <div className="header-bottom">
             <div className="header-menu">
-              <div class="header-menu-trigger">
+              <div className="header-menu-trigger">
                 <button
                   className="br-button small circle"
                   type="button"
@@ -111,8 +109,8 @@ export default function Cabecalho({ onToggleMenu, titulopage }) {
                   <i className="fas fa-bars" aria-hidden="true"></i>
                 </button>
               </div>
-              <div class="header-info">
-                <div class="header-title">{titulopage}</div>
+              <div className="header-info">
+                <div className="header-title">{titulopage}</div>
               </div>
             </div>
             <div className="header-search" id="main-searchbox">

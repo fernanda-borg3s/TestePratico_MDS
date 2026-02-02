@@ -1,46 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
 import MenuLateralEsquerdo from "../../componentes/MenuLateralEsquerdo/MenuLateralEsquerdo";
-import PopUpsSucess from "../../componentes/PopUps/PopUpsSucess";
+import PopUps from "../../componentes/PopUps/PopUps";
 import Service from "../../Services/service";
+import Button from "../../componentes/Button/Button";
+import { getPopupConfig } from "../../Services/popupConfigs";
 
 export default function PaginaAcesso() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [formData, setFormData] = useState({ email: "", senha: "" });
   const { login } = useAuth();
   const navigate = useNavigate();
-
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  //função de login
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("email", formData.email);
     data.append("senha", formData.senha);
-    //     console.log("FormData preparado:", {
-    //   email: formData.email,
-    //   senha: formData.senha
-    // });
-
     try {
       //chama o service.acessar para fazer autenticação
       const result = await Service.acessar(data);
-      // POP-UP de Retorno (Sucesso ou Erro)
-      // alert(result.message);
-      console.log("Resultado do login:", result);
       if (result.ok) {
-        console.log(result.user);
-        login(result.user); // result.user vem do backend como email ou objeto
-        navigate("/painel");
+        login(result.data.user); // result.user vem do backend como email ou objeto
+        navigate("/painel"); // redireciona para a página do painel
+      } else if (result.status === 401) { 
+        setPopupConfig(getPopupConfig(401));
+        setShowPopup(true);
       }
-    } catch (error) {
-      console.error("Erro ao fazer login.", error);
+    } catch {
+      setPopupConfig(getPopupConfig(500));
+      setShowPopup(true);
     }
   };
+
+  useEffect(() => {
+    if (showPopup) {
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+        setPopupConfig(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup]);
+
   return (
     <>
       <div className="template-base">
@@ -52,13 +62,25 @@ export default function PaginaAcesso() {
           isOpen={menuAberto}
           onClose={() => setMenuAberto(false)}
         />
-        <PopUpsSucess mensagem={"Usuário registrado!"} />
+        {/* mostrar pop-up ao tentar acessar painel sem estar logado */}
+        {showPopup && popupConfig && (
+          <PopUps
+            classColor={popupConfig.classColor}
+            icon={popupConfig.icon}
+            mensagemTitle={popupConfig.mensagemTitle}
+            mensagemBody={popupConfig.mensagemBody}
+            onClose={() => {
+              setShowPopup(false);
+              setPopupConfig(null);
+            }}
+          />
+        )}
 
-        <main class="d-flex " id="main">
-          <div class="container-lg d-flex align-item-center justify-content-center">
-            <div class="row">
-              <div class="br-menu menu-acesso" id="main-navigation">
-                <div class="main-content  p-4" id="main-content">
+        <main className="d-flex m-auto" id="main">
+          <div className="container-lg d-flex align-items-center justify-content-center">
+            <div className="row">
+              <div className="br-menu menu-acesso" id="main-navigation">
+                <div className="main-content  p-4" id="main-content">
                   <h2 className="">Acesso ao Sistema</h2>
                   <form onSubmit={handleSubmit}>
                     <div className="br-input mb-3">
@@ -83,9 +105,7 @@ export default function PaginaAcesso() {
                         required
                       />
                     </div>
-                    <button className="br-button primary mr-3" type="submit">
-                      Acessar
-                    </button>
+                    <Button titulo={"Acessar"} />
                   </form>
                 </div>
               </div>
