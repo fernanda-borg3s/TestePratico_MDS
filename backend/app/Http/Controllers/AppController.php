@@ -54,7 +54,7 @@ class AppController extends Controller
                 'ok' => false,
                 'status' => 403,
                 'message' => 'Usuário deve ser maior de 18 anos.'
-            ], 400);
+            ], 403);
         }
 
         //  Validação de E-mail Único 
